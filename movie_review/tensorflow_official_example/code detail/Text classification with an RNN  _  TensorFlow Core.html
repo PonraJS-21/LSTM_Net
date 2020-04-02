@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)https://www.tensorflow.org/tutorials/text/text_classification_rnn -->
+<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+    <meta name="google-signin-client-id" content="157101835696-ooapojlodmuabs2do2vuhhnf90bccmoi.apps.googleusercontent.com">
+    <meta name="google-signin-scope" content="profile email">
+    <meta property="og:site_name" content="TensorFlow">
+    <meta property="og:type" content="website">
+    
+          <meta name="theme-color" content="#ff6f00">
+    
+    
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="https://www.tensorflow.org/_pwa/tensorflow/manifest.json" crossorigin="use-credentials">
+    <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin="">
+    <link rel="stylesheet" href="./Text classification with an RNN  _  TensorFlow Core_files/css">
+        <link rel="stylesheet" href="./Text classification with an RNN  _  TensorFlow Core_files/app.css">
+    <noscript>
+      <link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow/css/ce_bundle.css">
+    </noscript>
+    <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow/images/favicon.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow/images/apple-touch-icon-180x180.png"><link rel="canonical" href="https://www.tensorflow.org/tutorials/text/text_classification_rnn"><link rel="search" type="application/opensearchdescription+xml" title="TensorFlow" href="https://www.tensorflow.org/s/opensearch.xml">      
+<title>Text classification with an RNN &nbsp;|&nbsp; TensorFlow Core</title>
+
+<meta property="og:title" content="Text classification with an RNN  |  TensorFlow Core">
+
+
+  <meta property="og:url" content="https://www.tensorflow.org/tutorials/text/text_classification_rnn">
+
+  <meta property="og:locale" content="en">
+
+
+  <script type="text/javascript" async="" src="./Text classification with an RNN  _  TensorFlow Core_files/linkid.js.download"></script><script async="" src="./Text classification with an RNN  _  TensorFlow Core_files/app_loader.js.download"></script><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "TensorFlow Core",
+      "item": "https://www.tensorflow.org/overview"
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Text classification with an RNN",
+      "item": "https://www.tensorflow.org/tutorials/text/text_classification_rnn"
+    }]
+  }
+  </script>
+
+
+
+  
+
+  
+
+  
+
+
+    <script src="./Text classification with an RNN  _  TensorFlow Core_files/webcomponents-lite.js.download"></script><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_app.js.download"></script><script src="./Text classification with an RNN  _  TensorFlow Core_files/analytics.js.download"></script><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_code_module.js.download"></script><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_code.css"><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_heading_module.js.download"></script><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_heading.css"><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_heading_link_module.js.download"></script><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_page_rating_module.js.download"></script><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_page_rating.css"><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_snackbar_module.js.download"></script><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_snackbar.css"><script src="./Text classification with an RNN  _  TensorFlow Core_files/devsite_tooltip_module.js.download"></script><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_tooltip.css"><link rel="stylesheet" type="text/css" href="./Text classification with an RNN  _  TensorFlow Core_files/devsite_content_footer.css"><style type="text/css"></style></head>
+  <body type="article" theme="tensorflow-theme" class="" layout="docs" ready="">
+    <devsite-progress id="app-progress"></devsite-progress>
+    <section class="devsite-wrapper"><devsite-header top-row--height="49" bottom-row--height="104" bottom-tabs--height="48" fixed="" offset="104" bottom-row--hidden="">
+      
+
+
+
+
+
+
+
+<div class="devsite-header--inner">
+  <div class="devsite-top-logo-row-wrapper-wrapper">
+    <div class="devsite-top-logo-row-wrapper">
+      <div class="devsite-top-logo-row">
+        <button type="button" id="devsite-hamburger-menu" class="devsite-header-icon-button button-flat material-icons gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Navigation menu button" aria-label="Open menu">
+        </button>
+        <div class="devsite-product-name-wrapper">
+  <a href="https://www.tensorflow.org/" class="devsite-site-logo-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Site logo" track-type="globalNav" track-name="tensorFlow" track-metadata-position="nav" track-metadata-eventdetail="nav">
+  <img src="./Text classification with an RNN  _  TensorFlow Core_files/lockup.svg" class="devsite-site-logo" alt="TensorFlow">
+</a>
+
+  <span class="devsite-product-name">
+    <ul class="devsite-breadcrumb-list">
+    <li class="devsite-breadcrumb-item
+             ">
+                              </li>
+  </ul>
+  </span>
+</div>
+        <div class="devsite-top-logo-row-middle">
+          <div class="devsite-header-upper-tabs">
+                            <devsite-tabs class="upper-tabs" connected="">
+    
+  <div class="devsite-tabs-wrapper">
+                        <tab>
+            <a href="https://www.tensorflow.org/install" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="install" data-category="Site-Wide Custom Events" data-label="Tab: Install">
+  Install
+</a>
+
+          </tab>
+                                <tab dropdown="" active="">
+  <a href="https://www.tensorflow.org/learn" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="learn" aria-label="Learn, selected" data-category="Site-Wide Custom Events" data-label="Tab: Learn">
+  Learn
+</a>
+  <a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" aria-haspopup="true" aria-expanded="false" aria-label="Toggle menu" role="button" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="learn" data-category="Site-Wide Custom Events" data-label="Tab: Learn" class="devsite-tabs-dropdown-toggle devsite-icon devsite-icon-arrow-drop-down"></a>
+
+  <div class="devsite-tabs-dropdown" aria-hidden="true" aria-label="submenu">
+        <div class="devsite-tabs-dropdown-content">
+              <div class="devsite-tabs-dropdown-column
+                    ">
+                      <ul class="devsite-tabs-dropdown-section
+                       ">
+                                                          <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/learn" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/learn" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Introduction
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      New to TensorFlow?
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/overview" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/overview" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      TensorFlow
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      The core open source ML library
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/js" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/js" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      For JavaScript
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      TensorFlow.js for ML using JavaScript
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/lite" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/lite" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      For Mobile &amp; IoT
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      TensorFlow Lite for mobile and embedded devices
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/tfx" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/tfx" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      For Production
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      TensorFlow Extended for end-to-end ML components
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/swift" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/swift" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Swift for TensorFlow (in beta)
+                    </div>
+                                      </a>
+                </li>
+                          </ul>
+                  </div>
+          </div>
+  </div>
+</tab>
+                                <tab dropdown="">
+  <a href="https://www.tensorflow.org/api" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="api" data-category="Site-Wide Custom Events" data-label="Tab: API">
+  API
+</a>
+  <a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" aria-haspopup="true" aria-expanded="false" aria-label="Toggle menu" role="button" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="api" data-category="Site-Wide Custom Events" data-label="Tab: API" class="devsite-tabs-dropdown-toggle devsite-icon devsite-icon-arrow-drop-down"></a>
+
+  <div class="devsite-tabs-dropdown" aria-hidden="true" aria-label="submenu">
+        <div class="devsite-tabs-dropdown-content">
+              <div class="devsite-tabs-dropdown-column
+                    " style="width: 95px;">
+                      <ul class="devsite-tabs-dropdown-section
+                       ">
+                              <li class="devsite-nav-title" tooltip="">API</li>
+                                                          <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/api/stable" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/api/stable" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      r2.1 (stable)
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/api/r2.2" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/api/r2.2" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      r2.2 (rc)
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/api/r2.0" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/api/r2.0" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      r2.0
+                    </div>
+                                      </a>
+                </li>
+                          </ul>
+                  </div>
+              <div class="devsite-tabs-dropdown-column
+                    " style="width: 95px;">
+                      <ul class="devsite-tabs-dropdown-section
+                       ">
+                              <li class="devsite-nav-title" tooltip="">API r1</li>
+                                                          <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/api/r1.15" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/api/r1.15" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      r1.15
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/versions" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/versions" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      More…
+                    </div>
+                                      </a>
+                </li>
+                          </ul>
+                  </div>
+          </div>
+  </div>
+</tab>
+                                <tab dropdown="">
+  <a href="https://www.tensorflow.org/resources/models-datasets" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="resources" data-category="Site-Wide Custom Events" data-label="Tab: Resources">
+  Resources
+</a>
+  <a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" aria-haspopup="true" aria-expanded="false" aria-label="Toggle menu" role="button" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="resources" data-category="Site-Wide Custom Events" data-label="Tab: Resources" class="devsite-tabs-dropdown-toggle devsite-icon devsite-icon-arrow-drop-down"></a>
+
+  <div class="devsite-tabs-dropdown" aria-hidden="true" aria-label="submenu">
+        <div class="devsite-tabs-dropdown-content">
+              <div class="devsite-tabs-dropdown-column
+                    ">
+                      <ul class="devsite-tabs-dropdown-section
+                       ">
+                                                          <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/resources/models-datasets" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/resources/models-datasets" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Models &amp; datasets
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      Pre-trained models and datasets built by Google and the community
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/resources/tools" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/resources/tools" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Tools
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      Ecosystem of tools to help you use TensorFlow
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/resources/libraries-extensions" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/resources/libraries-extensions" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Libraries &amp; extensions
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      Libraries and extensions built on TensorFlow
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/certificate" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/certificate" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      TensorFlow Certificate program
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      Differentiate yourself by demonstrating your ML proficiency
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/resources/learn-ml" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/resources/learn-ml" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Learn ML
+                    </div>
+                                        <div class="devsite-nav-item-description">
+                      Educational resources to learn the fundamentals of ML with TensorFlow
+                    </div>
+                                      </a>
+                </li>
+                          </ul>
+                  </div>
+          </div>
+  </div>
+</tab>
+                                <tab>
+            <a href="https://www.tensorflow.org/community" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="community" data-category="Site-Wide Custom Events" data-label="Tab: Community">
+  Community
+</a>
+
+          </tab>
+                                <tab dropdown="">
+  <a href="https://www.tensorflow.org/about" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="whyTensorflow" data-category="Site-Wide Custom Events" data-label="Tab: Why TensorFlow">
+  Why TensorFlow
+</a>
+  <a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" aria-haspopup="true" aria-expanded="false" aria-label="Toggle menu" role="button" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="whyTensorflow" data-category="Site-Wide Custom Events" data-label="Tab: Why TensorFlow" class="devsite-tabs-dropdown-toggle devsite-icon devsite-icon-arrow-drop-down"></a>
+
+  <div class="devsite-tabs-dropdown" aria-hidden="true" aria-label="submenu">
+        <div class="devsite-tabs-dropdown-content">
+              <div class="devsite-tabs-dropdown-column
+                    ">
+                      <ul class="devsite-tabs-dropdown-section
+                       ">
+                                                          <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/about" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/about" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      About
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/about/case-studies" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/about/case-studies" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Case studies
+                    </div>
+                                      </a>
+                </li>
+                              <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/trusted-partners" track-type="navMenu" track-metadata-position="nav" track-metadata-href="/trusted-partners" tooltip="">
+                    
+                    <div class="devsite-nav-item-title">
+                      Trusted Partner Program
+                    </div>
+                                      </a>
+                </li>
+                          </ul>
+                  </div>
+          </div>
+  </div>
+</tab>
+                  <tab overflow-tab="" hidden=""><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" class="devsite-icon devsite-icon-arrow-drop-down">More</a><div class="devsite-tabs-overflow-menu" scrollbars="" hidden=""></div></tab></div></devsite-tabs>
+
+
+                       </div>
+          <devsite-search enable-signin="" enable-search="" enable-suggestions="" enable-query-completion="" project-name="TensorFlow Core" tenant-name="TensorFlow">
+  <form class="devsite-search-form" action="https://www.tensorflow.org/s/results" method="GET">
+    <div class="devsite-search-container">
+      <div class="devsite-searchbox">
+                <input placeholder="Search" type="text" class="devsite-search-field devsite-search-query" name="q" value="" autocomplete="off" aria-label="Search box">
+        <div class="devsite-search-image material-icons" aria-hidden="true"></div>
+      </div>
+      <button type="button" search-open="" class="devsite-search-button devsite-header-icon-button button-flat material-icons" aria-label="Open search box"></button>
+    </div>
+  <div class="devsite-popout"><div class="devsite-popout-result devsite-suggest-results-container" devsite-hide="" role="menu" aria-haspopup="true"></div></div></form>
+  <button type="button" search-close="" class="devsite-search-button devsite-header-icon-button button-flat material-icons" aria-label="Close search box"></button>
+</devsite-search>
+
+        <div class="devsite-search-background" style="opacity: 1;"></div></div>
+
+        
+        <devsite-language-selector>
+  <devsite-select class="devsite-language-selector-menu">
+    <select class="devsite-language-selector-select" name="language" track-name="click" track-type="languageSelector">
+              <option value="en" track-metadata-original-language="en" track-metadata-selected-language="en" track-name="changed" track-type="languageSelector" selected="selected">
+        English
+      </option>
+          <option value="zh_cn" track-metadata-original-language="en" track-metadata-selected-language="zh_cn" track-name="changed" track-type="languageSelector">
+        中文 – 简体
+      </option>
+          <option value="ja" track-metadata-original-language="en" track-metadata-selected-language="ja" track-name="changed" track-type="languageSelector">
+        日本語
+      </option>
+        </select>
+  <div class="devsite-select"><button type="button" class="devsite-select-toggle">English</button><ul class="devsite-select-list" scrollbars=""><li class="devsite-select-item" data-index="0" data-selected="">English</li><li class="devsite-select-item" data-index="1">中文 – 简体</li><li class="devsite-select-item" data-index="2">日本語</li></ul></div></devsite-select>
+</devsite-language-selector>
+
+
+                    <a class="devsite-header-link devsite-top-button button gc-analytics-event" href="https://github.com/tensorflow" data-category="Site-Wide Custom Events" data-label="Site header link">
+    GitHub
+  </a>
+  
+        
+                                      <devsite-user sign-in-url="https://www.tensorflow.org/_d/signin?continue=https%3A%2F%2Fwww.tensorflow.org%2Ftutorials%2Ftext%2Ftext_classification_rnn&amp;prompt=select_account" sign-out-url="https://www.tensorflow.org/_d/signout?continue=https%3A%2F%2Fwww.tensorflow.org%2Ftutorials%2Ftext%2Ftext_classification_rnn" url="https://www.tensorflow.org/_d/signout?continue=https%3A%2F%2Fwww.tensorflow.org%2Ftutorials%2Ftext%2Ftext_classification_rnn"><div class="ogb-wrapper ogb-si"><a href="https://www.tensorflow.org/_d/signin?continue=https%3A%2F%2Fwww.tensorflow.org%2Ftutorials%2Ftext%2Ftext_classification_rnn&amp;prompt=select_account" class="devsite-user-signin button devsite-top-button">
+  Sign in
+</a></div></devsite-user>
+                         </div>    </div>  </div>
+  <div class="devsite-collapsible-section
+    " style="transform: translate3d(0px, -104px, 0px);">
+    <div class="devsite-header-background">
+                        <div class="devsite-product-id-row">
+            <div class="devsite-product-description-row">
+                                                <ul class="devsite-breadcrumb-list">
+    <li class="devsite-breadcrumb-item
+             ">
+                    <a href="https://www.tensorflow.org/overview" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Lower Header" data-value="1">
+            TensorFlow Core
+      
+  </a>
+        </li>
+  </ul>
+                                                        </div>
+                                                                            </div>
+                                      <div class="devsite-doc-set-nav-row">
+                                                      <devsite-tabs class="lower-tabs" connected="">
+    
+  <div class="devsite-tabs-wrapper">
+                        <tab>
+            <a href="https://www.tensorflow.org/overview" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="overview" data-category="Site-Wide Custom Events" data-label="Tab: Overview">
+  Overview
+</a>
+
+          </tab>
+                                <tab active="">
+            <a href="https://www.tensorflow.org/tutorials" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="tutorials" aria-label="Tutorials, selected" data-category="Site-Wide Custom Events" data-label="Tab: Tutorials">
+  Tutorials
+</a>
+
+          </tab>
+                                <tab>
+            <a href="https://www.tensorflow.org/guide" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="guide" data-category="Site-Wide Custom Events" data-label="Tab: Guide">
+  Guide
+</a>
+
+          </tab>
+                                <tab>
+            <a href="https://github.com/tensorflow/docs/tree/master/site/en/r1" class="gc-analytics-event" track-type="globalNav" track-metadata-position="nav" track-metadata-eventdetail="nav" track-name="tf1" data-category="Site-Wide Custom Events" data-label="Tab: TF 1">
+  TF 1
+</a>
+
+          </tab>
+                  <tab overflow-tab="" hidden=""><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#" class="devsite-icon devsite-icon-arrow-drop-down">More</a><div class="devsite-tabs-overflow-menu" scrollbars="" hidden=""></div></tab></div></devsite-tabs>
+
+
+                            </div>
+          </div>  </div></div>
+  
+
+  </devsite-header>      <div class="devsite-book-nav-bg" fixed=""></div><devsite-book-nav scrollbars="" animatable="" fixed="" style="top: 153px; max-height: 625px; transform: translate3d(0px, -104px, 0px);">
+                  
+
+
+
+
+
+<nav class="devsite-book-nav devsite-nav nocontent">
+  <div class="devsite-mobile-header">
+    <button type="button" id="devsite-close-nav" class="devsite-header-icon-button button-flat material-icons gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Close navigation" aria-label="Close navigation">
+    </button>
+    <div class="devsite-product-name-wrapper">
+  <a href="https://www.tensorflow.org/" class="devsite-site-logo-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Site logo" track-type="globalNav" track-name="tensorFlow" track-metadata-position="nav" track-metadata-eventdetail="nav">
+  <img src="./Text classification with an RNN  _  TensorFlow Core_files/lockup.svg" class="devsite-site-logo" alt="TensorFlow">
+</a>
+        <span class="devsite-product-name">
+        <ul class="devsite-breadcrumb-list">
+    <li class="devsite-breadcrumb-item
+             ">
+                              </li>
+  </ul>
+      </span>
+    
+</div>  </div>
+
+  <div class="devsite-book-nav-wrapper">
+    <div class="devsite-mobile-nav-top">
+              <ul class="devsite-nav-list">
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/install" class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Install" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="install"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Install
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward"><span>
+    </span></span><span>
+        </span></a>
+  
+                                        </li>
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/learn" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Responsive Tab: Learn" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="learn"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Learn
+   </span></span><span>
+        </span></a>
+  
+                              <ul class="devsite-nav-responsive-tabs devsite-nav-has-menu">
+                  <li class="devsite-nav-item">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="Learn"><span>
+      More
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="Learn"><span>
+    </span></span><span>
+        </span></span>
+  </li>
+
+                </ul>
+                                            <ul class="devsite-nav-responsive-tabs">
+                                                                                                  <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/overview" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Overview" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="overview"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Overview
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                                                  <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/tutorials" class="devsite-nav-title gc-analytics-event devsite-nav-has-children" data-category="Site-Wide Custom Events" data-label="Responsive Tab: Tutorials" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="tutorials"><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="_book"><span>
+      Tutorials
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="_book"><span>
+    </span></span><span>
+        </span></a>
+  </li>
+
+                                                                                                  <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/guide" class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Guide" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="guide"><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="_book"><span>
+      Guide
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="_book"><span>
+    </span></span><span>
+        </span></a>
+  </li>
+
+                                                                                                  <li class="devsite-nav-item">
+    <a href="https://github.com/tensorflow/docs/tree/master/site/en/r1" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: TF 1" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="tf1"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      TF 1
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                  </ul>
+                          </li>
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/api" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: API" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="api"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      API
+   </span></span><span>
+        </span></a>
+  
+                              <ul class="devsite-nav-responsive-tabs devsite-nav-has-menu">
+                  <li class="devsite-nav-item">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="API"><span>
+      More
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="API"><span>
+    </span></span><span>
+        </span></span>
+  </li>
+
+                </ul>
+                                        </li>
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/resources/models-datasets" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Resources" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="resources"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Resources
+   </span></span><span>
+        </span></a>
+  
+                              <ul class="devsite-nav-responsive-tabs devsite-nav-has-menu">
+                  <li class="devsite-nav-item">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="Resources"><span>
+      More
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="Resources"><span>
+    </span></span><span>
+        </span></span>
+  </li>
+
+                </ul>
+                                        </li>
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/community" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Community" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="community"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Community
+   </span></span><span>
+        </span></a>
+  
+                                        </li>
+                      <li class="devsite-nav-item">
+                  <a href="https://www.tensorflow.org/about" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Why TensorFlow" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="whyTensorflow"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Why TensorFlow
+   </span></span><span>
+        </span></a>
+  
+                              <ul class="devsite-nav-responsive-tabs devsite-nav-has-menu">
+                  <li class="devsite-nav-item">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip="" menu="Why TensorFlow"><span>
+      More
+   </span></span><span>
+        </span><span class="devsite-nav-icon material-icons" data-icon="forward" menu="Why TensorFlow"><span>
+    </span></span><span>
+        </span></span>
+  </li>
+
+                </ul>
+                                        </li>
+                        <li class="devsite-nav-item">
+    <a href="https://github.com/tensorflow" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: GitHub" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="gitHub"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      GitHub
+   </span></span><span>
+        </span></a>
+  </li>
+
+  
+                  </ul>
+          </div>
+          <div class="devsite-mobile-nav-bottom">
+                            <ul class="devsite-nav-list" menu="_book">
+            <li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>TensorFlow tutorials</span></span></a></li>
+  <li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/quickstart/beginner" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Quickstart for beginners</span></span></a></li>
+  <li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/quickstart/advanced" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Quickstart for experts</span></span></a></li>
+  <li class="devsite-nav-item           devsite-nav-divider           devsite-nav-heading"><div class="devsite-nav-title devsite-nav-title-no-path"><span class="devsite-nav-text" tooltip=""><span>Beginner</span></span></div></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>ML basics with Keras</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/classification" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Basic image classification</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/text_classification_with_hub" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Text classification with TF Hub</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/text_classification" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Text classification with preprocessed text</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/regression" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Regression</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/overfit_and_underfit" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Overfit and underfit</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/keras/save_and_load" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Save and load</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Load and preprocess data</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/csv" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>CSV</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/numpy" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>NumPy</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/pandas_dataframe" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>pandas.<wbr>DataFrame</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/images" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Images</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/text" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Text</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/unicode" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Unicode</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/tensorflow_text/intro" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>TF.<wbr>Text</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/load_data/tfrecord" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>TFRecord and tf.<wbr>Example</span></span></a></li><li class="devsite-nav-item           devsite-nav-external"><a href="https://github.com/tensorflow/io#tensorflow-io" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Additional formats with tf.<wbr>io</span></span><span class="devsite-nav-icon material-icons" data-icon="external" data-title="External" aria-hidden="true"></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Estimator</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/estimator/premade" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Premade estimator</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/estimator/linear" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Linear model</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/estimator/boosted_trees" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Boosted trees</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/estimator/boosted_trees_model_understanding" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Boosted trees model understanding</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/estimator/keras_model_to_estimator" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Keras model to Estimator</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-divider           devsite-nav-heading"><div class="devsite-nav-title devsite-nav-title-no-path"><span class="devsite-nav-text" tooltip=""><span>Advanced</span></span></div></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Customization</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/basics" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Tensors and operations</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/custom_layers" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Custom layers</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/autodiff" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Automatic differentiation</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/custom_training" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Custom training</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/custom_training_walkthrough" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Custom training: walkthrough</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/customization/performance" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Performance with tf.<wbr>function</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Distributed training</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/distribute/keras" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Distributed training with Keras</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/distribute/custom_training" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Custom training loops</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/distribute/multi_worker_with_keras" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Multi-worker training with Keras</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/distribute/multi_worker_with_estimator" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Multi-worker training with Estimator</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/distribute/save_and_load" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Save and load</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Images</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/cnn" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Convolutional Neural Network</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/classification" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Image classification</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/transfer_learning_with_hub" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Transfer learning with TF Hub</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/transfer_learning" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Transfer learning with pretrained CNN</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/data_augmentation" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Data Augmentation</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/images/segmentation" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Image segmentation</span></span></a></li><li class="devsite-nav-item           devsite-nav-external"><a href="https://github.com/tensorflow/hub/blob/master/examples/colab/object_detection.ipynb" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Object detection with TF Hub</span></span><span class="devsite-nav-icon material-icons" data-icon="external" data-title="External" aria-hidden="true"></span></a></li><li class="devsite-nav-item           devsite-nav-external"><a href="https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Object detection API</span></span><span class="devsite-nav-icon material-icons" data-icon="external" data-title="External" aria-hidden="true"></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Text</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/word_embeddings" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Word embeddings</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn" class="devsite-nav-title devsite-nav-active"><span class="devsite-nav-text" tooltip=""><span>Text classification with an RNN</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_generation" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Text generation with an RNN</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/nmt_with_attention" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Neural machine translation with attention</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/image_captioning" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Image captioning</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/transformer" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Transformer model for language understanding</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Structured data</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/structured_data/feature_columns" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Classify structured data with feature columns</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/structured_data/imbalanced_data" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Classification on imbalanced data</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/structured_data/time_series" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Time series forecasting</span></span></a></li></ul></devsite-expandable-nav></li>
+  <li class="devsite-nav-item           devsite-nav-expandable           devsite-nav-accordion"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button"><span class="devsite-nav-text" tooltip=""><span>Generative</span></span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/style_transfer" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Neural style transfer</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/deepdream" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>DeepDream</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/dcgan" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>DCGAN</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/pix2pix" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Pix2Pix</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/cyclegan" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>CycleGAN</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/adversarial_fgsm" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Adversarial FGSM</span></span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/generative/cvae" class="devsite-nav-title"><span class="devsite-nav-text" tooltip=""><span>Variational Autoencoder</span></span></a></li></ul></devsite-expandable-nav></li>
+          </ul>
+                                                                          <ul class="devsite-nav-list" menu="Learn" hidden="">
+                                                                                                <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/learn" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Introduction" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="introduction"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Introduction
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/overview" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: TensorFlow" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="tensorFlow"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      TensorFlow
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/js" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: For JavaScript" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="forJavascript"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      For JavaScript
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/lite" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: For Mobile &amp; IoT" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="forMobile&amp;Iot"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      For Mobile &amp; IoT
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/tfx" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: For Production" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="forProduction"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      For Production
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/swift" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Swift for TensorFlow (in beta)" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="swiftForTensorflow(InBeta)"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Swift for TensorFlow (in beta)
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                    </ul>
+                                                <ul class="devsite-nav-list" menu="API" hidden="">
+                                                                            <li class="devsite-nav-item devsite-nav-heading">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      API
+   </span></span><span>
+        </span></span>
+  </li>
+
+                                                              <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/api/stable" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: r2.1 (stable)" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="r2.1(Stable)"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      r2.<wbr>1 (stable)
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/api/r2.2" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: r2.2 (rc)" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="r2.2(Rc)"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      r2.<wbr>2 (rc)
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/api/r2.0" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: r2.0" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="r2.0"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      r2.<wbr>0
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                                                                  <li class="devsite-nav-item devsite-nav-heading">
+    <span class="devsite-nav-title" tooltip=""><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      API r1
+   </span></span><span>
+        </span></span>
+  </li>
+
+                                                              <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/api/r1.15" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: r1.15" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="r1.15"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      r1.<wbr>15
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/versions" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: More…" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="more…"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      More…
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                    </ul>
+                                                <ul class="devsite-nav-list" menu="Resources" hidden="">
+                                                                                                <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/resources/models-datasets" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Models &amp; datasets" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="models&amp;Datasets"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Models &amp; datasets
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/resources/tools" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Tools" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="tools"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Tools
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/resources/libraries-extensions" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Libraries &amp; extensions" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="libraries&amp;Extensions"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Libraries &amp; extensions
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/certificate" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: TensorFlow Certificate program" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="tensorFlowCertificateProgram"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      TensorFlow Certificate program
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/resources/learn-ml" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Learn ML" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="learnMl"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Learn ML
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                    </ul>
+                                                                      <ul class="devsite-nav-list" menu="Why TensorFlow" hidden="">
+                                                                                                <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/about" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: About" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="about"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      About
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/about/case-studies" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Case studies" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="caseStudies"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Case studies
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                          <li class="devsite-nav-item">
+    <a href="https://www.tensorflow.org/trusted-partners" class="devsite-nav-title gc-analytics-event
+                            " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Trusted Partner Program" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="trustedPartnerProgram"><span>
+      </span><span class="devsite-nav-text" tooltip=""><span>
+      Trusted Partner Program
+   </span></span><span>
+        </span></a>
+  </li>
+
+                                                                    </ul>
+                                    </div>
+      </div>
+</nav>
+              </devsite-book-nav>
+      <section id="gc-wrapper" style="margin-top: 153px;">
+        <main role="main" class="devsite-main-content" has-book-nav="" has-toc="">
+          <devsite-toc class="devsite-nav devsite-toc" visible="" fixed="" max-height="577" offset="104"><ul class="devsite-nav-list" scrollbars="" style="max-height: 577px; transform: translate3d(0px, -104px, 0px); max-width: 243px;"><li class="devsite-nav-item devsite-nav-heading devsite-toc-toggle"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Contents</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#setup" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Setup</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#setup_input_pipeline" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Setup input pipeline</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#prepare_the_data_for_training" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Prepare the data for training</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#create_the_model" class="devsite-nav-title devsite-nav-active"><span class="devsite-nav-text" tooltip="">Create the model</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#train_the_model" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Train the model</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#stack_two_or_more_lstm_layers" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Stack two or more LSTM layers</span></a></li></ul></devsite-toc>
+          <devsite-content>
+                          
+
+<article class="devsite-article">
+  <article class="devsite-article-inner"><style>
+        /* Styles inlined from /site-assets/css/style.css */
+/* override theme */
+table img {
+  max-width: 100%;
+}
+
+/* override var element to differentiate color from comment */
+var, var code, var span, .prettyprint var span {
+  color: #039be5;
+}
+
+/* .devsite-terminal virtualenv prompt */
+.tfo-terminal-venv::before {
+  content: "(venv) $ " !important;
+}
+
+/* .devsite-terminal root prompt */
+.tfo-terminal-root::before {
+  content: "# " !important;
+}
+
+/* .devsite-terminal Windows prompt */
+.tfo-terminal-windows::before {
+  content: "C:\\> " !important;
+}
+
+/* .devsite-terminal Windows prompt w/ virtualenv */
+.tfo-terminal-windows-venv::before {
+  content: "(venv) C:\\> " !important;
+}
+
+.tfo-diff-green-one-level + * {
+  background: rgba(175, 245, 162, .6)  !important;
+}
+
+.tfo-diff-green + * > * {
+  background: rgba(175, 245, 162, .6)  !important;
+}
+
+.tfo-diff-green-list + ul > li:first-of-type {
+  background: rgba(175, 245, 162, .6)  !important;
+}
+
+.tfo-diff-red-one-level + * {
+  background: rgba(255, 230, 230, .6)  !important;
+  text-decoration: line-through  !important;
+}
+
+.tfo-diff-red + * > * {
+  background: rgba(255, 230, 230, .6)  !important;
+  text-decoration: line-through  !important;
+}
+
+.tfo-diff-red-list + ul > li:first-of-type {
+  background: rgba(255, 230, 230, .6)  !important;
+  text-decoration: line-through  !important;
+}
+
+devsite-code .tfo-notebook-code-cell-output {
+  max-height: 300px;
+  overflow: auto;
+  background: rgba(255, 247, 237, 1);  /* orange bg to distinguish from input code cells */
+}
+
+devsite-code .tfo-notebook-code-cell-output + .devsite-code-buttons-container button {
+  background: rgba(255, 247, 237, .7);  /* orange bg to distinguish from input code cells */
+}
+
+devsite-code[dark-code] .tfo-notebook-code-cell-output {
+  background: rgba(64, 78, 103, 1);  /* medium slate */
+}
+
+devsite-code[dark-code] .tfo-notebook-code-cell-output + .devsite-code-buttons-container button {
+  background: rgba(64, 78, 103, .7);  /* medium slate */
+}
+
+/* override default table styles for notebook buttons */
+.devsite-table-wrapper .tfo-notebook-buttons {
+  display: inline-block;
+  margin-left: 3px;
+  width: auto;
+}
+
+.tfo-notebook-buttons td {
+  padding-left: 0;
+  padding-right: 20px;
+}
+
+.tfo-notebook-buttons a,
+.tfo-notebook-buttons :link,
+.tfo-notebook-buttons :visited {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  color: #202124;
+  padding: 12px 24px;
+  transition: box-shadow 0.2s;
+}
+
+.tfo-notebook-buttons a:hover,
+.tfo-notebook-buttons a:focus {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
+}
+
+.tfo-notebook-buttons tr {
+  background: 0;
+  border: 0;
+}
+
+/* on rendered notebook page,
+   remove link to webpage since we're already here */
+.tfo-notebook-buttons:not(.tfo-api) td:first-child {
+  display: none;
+}
+
+.tfo-notebook-buttons td > a {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.tfo-notebook-buttons td > a > img {
+  margin-right: 8px;
+}
+
+/* landing pages */
+
+.tfo-landing-row-item-inset-white {
+  background-color: #fff;
+  padding: 32px;
+}
+
+.tfo-landing-row-item-inset-white ol,
+.tfo-landing-row-item-inset-white ul {
+  padding-left: 20px;
+}
+
+/* colab callout button */
+.colab-callout-row devsite-code {
+  border-radius: 8px 8px 0 0;
+  box-shadow: none;
+}
+
+.colab-callout-footer {
+  background: #e3e4e7;
+  border-radius: 0 0 8px 8px;
+  color: #37474f;
+  padding: 20px;
+}
+
+.colab-callout-row devsite-code[dark-code] + .colab-callout-footer {
+  background: #3f4f66;
+}
+
+
+.colab-callout-footer > .button {
+  margin-top: 4px;
+  color: #ff5c00;
+}
+
+.colab-callout-footer > a > span {
+  padding-top: 10px;
+  vertical-align: middle;
+  color: #37474f;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14px;
+}
+
+.colab-callout-row devsite-code[dark-code] + .colab-callout-footer > a > span {
+  color: #fff;
+}
+
+a.colab-button {
+  background: rgba(255, 255, 255, .75);
+  border: solid 1px rgba(0, 0, 0, .08);
+  border-bottom-color: rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  color: #aaa;
+  display: inline-block;
+  font-size: 11px !important;
+  font-weight: 300;
+  line-height: 16px;
+  padding: 4px 8px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+a.colab-button:hover {
+  background: white;
+  border-color: rgba(0, 0, 0, .2);
+  color: #666;
+}
+
+a.colab-button span {
+  background: url(/images/colab_logo_button.svg) no-repeat 1px 1px / 20px;
+  border-radius: 4px;
+  display: inline-block;
+  padding-left: 24px;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+  .tfo-notebook-buttons td {
+    display: block;
+  }
+}
+
+/* guide and tutorials landing page cards and sections */
+
+.tfo-landing-page-card {
+  padding: 16px;
+  box-shadow: 0 0 36px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+/* Page section headings */
+.tfo-landing-page-heading h2, h2.tfo-landing-page-heading {
+  font-family: "Google Sans", sans-serif;
+  color: #425066;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+/* Item title headings */
+.tfo-landing-page-heading h3, h3.tfo-landing-page-heading,
+.tfo-landing-page-card h3, h3.tfo-landing-page-card {
+  font-family: "Google Sans", sans-serif;
+  color: #425066;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 26px;
+}
+
+/* List of tutorials notebooks for subsites */
+.tfo-landing-page-resources-ul {
+  padding-left: 15px
+}
+
+.tfo-landing-page-resources-ul > li {
+  margin: 6px 0;
+}
+
+/* Temporary fix to hide product description in header on landing pages */
+devsite-header .devsite-product-description {
+  display: none;
+}
+
+        </style>          <div class="devsite-banner devsite-banner-announcement">
+        <div class="devsite-banner-message">
+          <div class="devsite-banner-message-text">
+            Missed TensorFlow Dev Summit? Check out the video playlist. <a href="https://goo.gle/TFDS20AllSessions" class="button button-primary button-tfo-announcement">Watch recordings</a>
+          </div>
+        </div>
+      </div>
+        
+    <div class="devsite-article-meta">
+      <ul class="devsite-breadcrumb-list">
+    <li class="devsite-breadcrumb-item
+             ">
+                    <a href="https://www.tensorflow.org/" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="1">
+            TensorFlow
+      
+  </a>
+        </li>
+    <li class="devsite-breadcrumb-item
+             ">
+                <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+                    <a href="https://www.tensorflow.org/learn" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="2">
+            Learn
+      
+  </a>
+        </li>
+    <li class="devsite-breadcrumb-item
+             ">
+                <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+                    <a href="https://www.tensorflow.org/overview" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="3">
+            TensorFlow Core
+      
+  </a>
+        </li>
+    <li class="devsite-breadcrumb-item
+             ">
+                <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+                    <a href="https://www.tensorflow.org/tutorials" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="4">
+            Tutorials
+      
+  </a>
+        </li>
+  </ul>
+               <devsite-page-rating position="header" selected-rating="0" hover-rating-star="0">
+         <div><div class="devsite-rating-stars"><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="1" track-metadata-score="1" track-type="feedback" track-name="rating" track-metadata-position="header" role="button" data-title="Unusable documentation" aria-label="Site content star ratings, rating 1 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="2" track-metadata-score="2" track-type="feedback" track-name="rating" track-metadata-position="header" role="button" data-title="Poor documentation" aria-label="Site content star ratings, rating 2 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="3" track-metadata-score="3" track-type="feedback" track-name="rating" track-metadata-position="header" role="button" data-title="OK documentation" aria-label="Site content star ratings, rating 3 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="4" track-metadata-score="4" track-type="feedback" track-name="rating" track-metadata-position="header" role="button" data-title="Good documentation" aria-label="Site content star ratings, rating 4 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="5" track-metadata-score="5" track-type="feedback" track-name="rating" track-metadata-position="header" role="button" data-title="Excellent documentation" aria-label="Site content star ratings, rating 5 out of 5"></div></div><div class="devsite-rating-internal"><span class="devsite-rating-stats"></span></div></div></devsite-page-rating>
+          </div>
+
+              <devsite-heading text="Text classification with an RNN" for="text-classification-with-an-rnn" level="h1"><h1 class="devsite-page-title" is-upgraded="" id="text-classification-with-an-rnn">Text classification with an RNN</h1></devsite-heading>
+    
+    <devsite-toc class="devsite-nav devsite-toc-embedded" devsite-toc-embedded="" visible=""><ul class="devsite-nav-list" scrollbars=""><li class="devsite-nav-item devsite-nav-heading devsite-toc-toggle"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Contents</span></a><button type="button" title="Expand/collapse contents" class="devsite-nav-show-all button-transparent material-icons"></button></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#setup" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Setup</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#setup_input_pipeline" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Setup input pipeline</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#prepare_the_data_for_training" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Prepare the data for training</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#create_the_model" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Create the model</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#train_the_model" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Train the model</span></a></li><li class="devsite-nav-item"><a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#stack_two_or_more_lstm_layers" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Stack two or more LSTM layers</span></a></li><li class="devsite-toc-toggle"><button type="button" class="button-flat devsite-nav-more-items material-icons" title="Expand/collapse contents" aria-hidden="true"></button></li></ul></devsite-toc>
+
+    <div class="devsite-article-body clearfix
+      ">
+
+              
+<p></p>
+
+<!-- DO NOT EDIT! Automatically generated file. -->
+
+<div itemscope="" itemtype="http://developers.google.com/ReferenceObject">
+<meta itemprop="name" content="Text classification with an RNN">
+<meta itemprop="path" content="Tutorial">
+<meta itemprop="property" content="tf.cast">
+<meta itemprop="property" content="tf.expand_dims">
+<meta itemprop="property" content="tf.keras.Sequential">
+<meta itemprop="property" content="tf.keras.layers.Bidirectional">
+<meta itemprop="property" content="tf.keras.layers.Dense">
+<meta itemprop="property" content="tf.keras.layers.Dropout">
+<meta itemprop="property" content="tf.keras.layers.Embedding">
+<meta itemprop="property" content="tf.keras.layers.LSTM">
+<meta itemprop="property" content="tf.keras.losses.BinaryCrossentropy">
+<meta itemprop="property" content="tf.keras.optimizers.Adam">
+</div>
+
+
+
+<div class="devsite-table-wrapper"><table class="tfo-notebook-buttons" align="left">
+  <tbody><tr><td>
+    <a target="_blank" href="https://www.tensorflow.org/tutorials/text/text_classification_rnn"><img src="./Text classification with an RNN  _  TensorFlow Core_files/tf_logo_32px.png">View on TensorFlow.org</a>
+  </td>
+  <td>
+    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/text/text_classification_rnn.ipynb"><img src="./Text classification with an RNN  _  TensorFlow Core_files/colab_logo_32px.png">Run in Google Colab</a>
+  </td>  <td>
+    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/tutorials/text/text_classification_rnn.ipynb"><img src="./Text classification with an RNN  _  TensorFlow Core_files/GitHub-Mark-32px.png">View source on GitHub</a>
+  </td>
+  <td>
+    <a href="https://storage.googleapis.com/tensorflow_docs/docs/site/en/tutorials/text/text_classification_rnn.ipynb"><img src="./Text classification with an RNN  _  TensorFlow Core_files/download_logo_32px.png">Download notebook</a>
+  </td>
+</tr></tbody></table></div>
+
+<p>This text classification tutorial trains a <a href="https://developers.google.com/machine-learning/glossary/#recurrent_neural_network">recurrent neural network</a> on the <a href="http://ai.stanford.edu/~amaas/data/sentiment/">IMDB large movie review dataset</a> for sentiment analysis.</p>
+
+<devsite-heading text="Setup" for="setup" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="setup" is-upgraded="">Setup<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pun">!</span><span class="pln">pip install </span><span class="pun">-</span><span class="pln">q tf</span><span class="pun">-</span><span class="pln">nightly<br></span><span class="kwd">import</span><span class="pln"> tensorflow_datasets </span><span class="kwd">as</span><span class="pln"> tfds<br></span><span class="kwd">import</span><span class="pln"> tensorflow </span><span class="kwd">as</span><span class="pln"> tf<br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">ERROR: tensorflow 2.1.0 has requirement gast==0.2.2, but you'll have gast 0.3.3 which is incompatible.
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+
+<p>Import <code translate="no" dir="ltr">matplotlib</code> and create a helper function to plot graphs:</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">import</span><span class="pln"> matplotlib</span><span class="pun">.</span><span class="pln">pyplot </span><span class="kwd">as</span><span class="pln"> plt<br><br></span><span class="kwd">def</span><span class="pln"> plot_graphs</span><span class="pun">(</span><span class="pln">history</span><span class="pun">,</span><span class="pln"> metric</span><span class="pun">):</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">plot</span><span class="pun">(</span><span class="pln">history</span><span class="pun">.</span><span class="pln">history</span><span class="pun">[</span><span class="pln">metric</span><span class="pun">])</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">plot</span><span class="pun">(</span><span class="pln">history</span><span class="pun">.</span><span class="pln">history</span><span class="pun">[</span><span class="str">'val_'</span><span class="pun">+</span><span class="pln">metric</span><span class="pun">],</span><span class="pln"> </span><span class="str">''</span><span class="pun">)</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">xlabel</span><span class="pun">(</span><span class="str">"Epochs"</span><span class="pun">)</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">ylabel</span><span class="pun">(</span><span class="pln">metric</span><span class="pun">)</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">legend</span><span class="pun">([</span><span class="pln">metric</span><span class="pun">,</span><span class="pln"> </span><span class="str">'val_'</span><span class="pun">+</span><span class="pln">metric</span><span class="pun">])</span><span class="pln"><br>&nbsp; plt</span><span class="pun">.</span><span class="pln">show</span><span class="pun">()</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-heading text="Setup input pipeline" for="setup_input_pipeline" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="setup_input_pipeline" is-upgraded="">Setup input pipeline<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+
+<p>The IMDB large movie review dataset is a <em>binary classification</em> dataset—all the reviews have either a <em>positive</em> or <em>negative</em> sentiment.</p>
+
+<p>Download the dataset using <a href="https://www.tensorflow.org/datasets">TFDS</a>.</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">dataset</span><span class="pun">,</span><span class="pln"> info </span><span class="pun">=</span><span class="pln"> tfds</span><span class="pun">.</span><span class="pln">load</span><span class="pun">(</span><span class="str">'imdb_reviews/subwords8k'</span><span class="pun">,</span><span class="pln"> with_info</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; as_supervised</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln"><br>train_examples</span><span class="pun">,</span><span class="pln"> test_examples </span><span class="pun">=</span><span class="pln"> dataset</span><span class="pun">[</span><span class="str">'train'</span><span class="pun">],</span><span class="pln"> dataset</span><span class="pun">[</span><span class="str">'test'</span><span class="pun">]</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p>The dataset <code translate="no" dir="ltr">info</code> includes the encoder (a <a href="https://www.tensorflow.org/datasets/api_docs/python/tfds/features/text/SubwordTextEncoder"><code translate="no" dir="ltr">tfds.features.text.SubwordTextEncoder</code></a>).</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">encoder </span><span class="pun">=</span><span class="pln"> info</span><span class="pun">.</span><span class="pln">features</span><span class="pun">[</span><span class="str">'text'</span><span class="pun">].</span><span class="pln">encoder<br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">print</span><span class="pun">(</span><span class="str">'Vocabulary size: {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">encoder</span><span class="pun">.</span><span class="pln">vocab_size</span><span class="pun">))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">Vocabulary size: 8185
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+
+<p>This text encoder will reversibly encode any string, falling back to byte-encoding if necessary.</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">sample_string </span><span class="pun">=</span><span class="pln"> </span><span class="str">'Hello TensorFlow.'</span><span class="pln"><br><br>encoded_string </span><span class="pun">=</span><span class="pln"> encoder</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="pln">sample_string</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'Encoded string is {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">encoded_string</span><span class="pun">))</span><span class="pln"><br><br>original_string </span><span class="pun">=</span><span class="pln"> encoder</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">(</span><span class="pln">encoded_string</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'The original string: "{}"'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">original_string</span><span class="pun">))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">Encoded string is [4025, 222, 6307, 2327, 4043, 2120, 7975]
+The original string: "Hello TensorFlow."
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">assert</span><span class="pln"> original_string </span><span class="pun">==</span><span class="pln"> sample_string<br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">for</span><span class="pln"> index </span><span class="kwd">in</span><span class="pln"> encoded_string</span><span class="pun">:</span><span class="pln"><br>&nbsp; </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'{} ----&gt; {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">index</span><span class="pun">,</span><span class="pln"> encoder</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">([</span><span class="pln">index</span><span class="pun">])))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">4025 ----&gt; Hell
+222 ----&gt; o 
+6307 ----&gt; Ten
+2327 ----&gt; sor
+4043 ----&gt; Fl
+2120 ----&gt; ow
+7975 ----&gt; .
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+
+<devsite-heading text="Prepare the data for training" for="prepare_the_data_for_training" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="prepare_the_data_for_training" is-upgraded="">Prepare the data for training<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+
+<p>Next create batches of these encoded strings. Use the <code translate="no" dir="ltr">padded_batch</code> method to zero-pad the sequences to the length of the longest string in the batch:</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">BUFFER_SIZE </span><span class="pun">=</span><span class="pln"> </span><span class="lit">10000</span><span class="pln"><br>BATCH_SIZE </span><span class="pun">=</span><span class="pln"> </span><span class="lit">64</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">train_dataset </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">train_examples<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">.</span><span class="pln">shuffle</span><span class="pun">(</span><span class="pln">BUFFER_SIZE</span><span class="pun">)</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">.</span><span class="pln">padded_batch</span><span class="pun">(</span><span class="pln">BATCH_SIZE</span><span class="pun">,</span><span class="pln"> padded_shapes</span><span class="pun">=([</span><span class="kwd">None</span><span class="pun">],[])))</span><span class="pln"><br><br>test_dataset </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">test_examples<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">.</span><span class="pln">padded_batch</span><span class="pun">(</span><span class="pln">BATCH_SIZE</span><span class="pun">,</span><span class="pln"> &nbsp;padded_shapes</span><span class="pun">=([</span><span class="kwd">None</span><span class="pun">],[])))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><aside class="note"><strong>Note:</strong><span> As of <strong>TensorFlow 2.2</strong> the padded_shapes argument is no longer required. The default behavior is to pad all axes to the longest in the batch.</span></aside><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">train_dataset </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">train_examples<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">.</span><span class="pln">shuffle</span><span class="pun">(</span><span class="pln">BUFFER_SIZE</span><span class="pun">)</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">.</span><span class="pln">padded_batch</span><span class="pun">(</span><span class="pln">BATCH_SIZE</span><span class="pun">))</span><span class="pln"><br><br>test_dataset </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">test_examples<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">.</span><span class="pln">padded_batch</span><span class="pun">(</span><span class="pln">BATCH_SIZE</span><span class="pun">))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-heading text="Create the model" for="create_the_model" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="create_the_model" is-upgraded="">Create the model<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+
+<p>Build a <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential"><code translate="no" dir="ltr">tf.keras.Sequential</code></a> model and start with an embedding layer. An embedding layer stores one vector per word. When called, it converts the sequences of word indices to sequences of vectors. These vectors are trainable. After training (on enough data), words with similar meanings often have similar vectors.</p>
+
+<p>This index-lookup is much more efficient than the equivalent operation of passing a one-hot encoded vector through a <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense"><code translate="no" dir="ltr">tf.keras.layers.Dense</code></a> layer.</p>
+
+<p>A recurrent neural network (RNN) processes sequence input by iterating through the elements. RNNs pass the outputs from one timestep to their input—and then to the next.</p>
+
+<p>The <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Bidirectional"><code translate="no" dir="ltr">tf.keras.layers.Bidirectional</code></a> wrapper can also be used with an RNN layer. This propagates the input forward and backwards through the RNN layer and then concatenates the output. This helps the RNN to learn long range dependencies.</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">model </span><span class="pun">=</span><span class="pln"> tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="typ">Sequential</span><span class="pun">([</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Embedding</span><span class="pun">(</span><span class="pln">encoder</span><span class="pun">.</span><span class="pln">vocab_size</span><span class="pun">,</span><span class="pln"> </span><span class="lit">64</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Bidirectional</span><span class="pun">(</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="pln">LSTM</span><span class="pun">(</span><span class="lit">64</span><span class="pun">)),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Dense</span><span class="pun">(</span><span class="lit">64</span><span class="pun">,</span><span class="pln"> activation</span><span class="pun">=</span><span class="str">'relu'</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Dense</span><span class="pun">(</span><span class="lit">1</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">])</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p>Compile the Keras model to configure the training process:</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">model</span><span class="pun">.</span><span class="pln">compile</span><span class="pun">(</span><span class="pln">loss</span><span class="pun">=</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">losses</span><span class="pun">.</span><span class="typ">BinaryCrossentropy</span><span class="pun">(</span><span class="pln">from_logits</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; optimizer</span><span class="pun">=</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">optimizers</span><span class="pun">.</span><span class="typ">Adam</span><span class="pun">(</span><span class="lit">1e-4</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; metrics</span><span class="pun">=[</span><span class="str">'accuracy'</span><span class="pun">])</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-heading text="Train the model" for="train_the_model" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="train_the_model" is-upgraded="">Train the model<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">history </span><span class="pun">=</span><span class="pln"> model</span><span class="pun">.</span><span class="pln">fit</span><span class="pun">(</span><span class="pln">train_dataset</span><span class="pun">,</span><span class="pln"> epochs</span><span class="pun">=</span><span class="lit">10</span><span class="pun">,</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; validation_data</span><span class="pun">=</span><span class="pln">test_dataset</span><span class="pun">,</span><span class="pln"> <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; validation_steps</span><span class="pun">=</span><span class="lit">30</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">Epoch 1/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.6406 - accuracy: 0.5610 - val_loss: 0.4282 - val_accuracy: 0.8078
+Epoch 2/10
+391/391 [==============================] - 41s 104ms/step - loss: 0.3428 - accuracy: 0.8578 - val_loss: 0.3380 - val_accuracy: 0.8510
+Epoch 3/10
+391/391 [==============================] - 41s 104ms/step - loss: 0.2560 - accuracy: 0.9014 - val_loss: 0.3209 - val_accuracy: 0.8646
+Epoch 4/10
+391/391 [==============================] - 41s 104ms/step - loss: 0.2138 - accuracy: 0.9211 - val_loss: 0.3430 - val_accuracy: 0.8714
+Epoch 5/10
+391/391 [==============================] - 41s 105ms/step - loss: 0.1869 - accuracy: 0.9330 - val_loss: 0.3498 - val_accuracy: 0.8677
+Epoch 6/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.1736 - accuracy: 0.9378 - val_loss: 0.3690 - val_accuracy: 0.8682
+Epoch 7/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.1502 - accuracy: 0.9495 - val_loss: 0.3648 - val_accuracy: 0.8573
+Epoch 8/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.1397 - accuracy: 0.9531 - val_loss: 0.4227 - val_accuracy: 0.8547
+Epoch 9/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.1259 - accuracy: 0.9581 - val_loss: 0.4375 - val_accuracy: 0.8562
+Epoch 10/10
+391/391 [==============================] - 40s 103ms/step - loss: 0.1249 - accuracy: 0.9601 - val_loss: 0.4373 - val_accuracy: 0.8547
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">test_loss</span><span class="pun">,</span><span class="pln"> test_acc </span><span class="pun">=</span><span class="pln"> model</span><span class="pun">.</span><span class="pln">evaluate</span><span class="pun">(</span><span class="pln">test_dataset</span><span class="pun">)</span><span class="pln"><br><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'Test Loss: {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">test_loss</span><span class="pun">))</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'Test Accuracy: {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">test_acc</span><span class="pun">))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">391/391 [==============================] - 15s 40ms/step - loss: 0.4355 - accuracy: 0.8561
+Test Loss: 0.4355419874191284
+Test Accuracy: 0.8561199903488159
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+
+<p>The above model does not mask the padding applied to the sequences. This can lead to skew if trained on padded sequences and test on un-padded sequences. Ideally you would <a href="https://www.tensorflow.org/guide/keras/masking_and_padding">use masking</a> to avoid this, but as you can see below it only have a small effect on the output.</p>
+
+<p>If the prediction is &gt;= 0.5, it is positive else it is negative.</p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">def</span><span class="pln"> pad_to_size</span><span class="pun">(</span><span class="pln">vec</span><span class="pun">,</span><span class="pln"> size</span><span class="pun">):</span><span class="pln"><br>&nbsp; zeros </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="lit">0</span><span class="pun">]</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="pun">(</span><span class="pln">size </span><span class="pun">-</span><span class="pln"> len</span><span class="pun">(</span><span class="pln">vec</span><span class="pun">))</span><span class="pln"><br>&nbsp; vec</span><span class="pun">.</span><span class="pln">extend</span><span class="pun">(</span><span class="pln">zeros</span><span class="pun">)</span><span class="pln"><br>&nbsp; </span><span class="kwd">return</span><span class="pln"> vec<br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">def</span><span class="pln"> sample_predict</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">,</span><span class="pln"> pad</span><span class="pun">):</span><span class="pln"><br>&nbsp; encoded_sample_pred_text </span><span class="pun">=</span><span class="pln"> encoder</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">)</span><span class="pln"><br><br>&nbsp; </span><span class="kwd">if</span><span class="pln"> pad</span><span class="pun">:</span><span class="pln"><br>&nbsp; &nbsp; encoded_sample_pred_text </span><span class="pun">=</span><span class="pln"> pad_to_size</span><span class="pun">(</span><span class="pln">encoded_sample_pred_text</span><span class="pun">,</span><span class="pln"> </span><span class="lit">64</span><span class="pun">)</span><span class="pln"><br>&nbsp; encoded_sample_pred_text </span><span class="pun">=</span><span class="pln"> tf</span><span class="pun">.</span><span class="pln">cast</span><span class="pun">(</span><span class="pln">encoded_sample_pred_text</span><span class="pun">,</span><span class="pln"> tf</span><span class="pun">.</span><span class="pln">float32</span><span class="pun">)</span><span class="pln"><br>&nbsp; predictions </span><span class="pun">=</span><span class="pln"> model</span><span class="pun">.</span><span class="pln">predict</span><span class="pun">(</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">expand_dims</span><span class="pun">(</span><span class="pln">encoded_sample_pred_text</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0</span><span class="pun">))</span><span class="pln"><br><br>&nbsp; </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">(</span><span class="pln">predictions</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="com"># predict on a sample text without padding.</span><span class="pln"><br><br>sample_pred_text </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'The movie was cool. The animation and the graphics '</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="str">'were out of this world. I would recommend this movie.'</span><span class="pun">)</span><span class="pln"><br>predictions </span><span class="pun">=</span><span class="pln"> sample_predict</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">,</span><span class="pln"> pad</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="pln">predictions</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">[[0.24708563]]
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="com"># predict on a sample text with padding</span><span class="pln"><br><br>sample_pred_text </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'The movie was cool. The animation and the graphics '</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="str">'were out of this world. I would recommend this movie.'</span><span class="pun">)</span><span class="pln"><br>predictions </span><span class="pun">=</span><span class="pln"> sample_predict</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">,</span><span class="pln"> pad</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="pln">predictions</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">[[-0.32349688]]
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">plot_graphs</span><span class="pun">(</span><span class="pln">history</span><span class="pun">,</span><span class="pln"> </span><span class="str">'accuracy'</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p><img src="./Text classification with an RNN  _  TensorFlow Core_files/output_ZfIVoxiNmKBF_0.png" alt="png"></p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">plot_graphs</span><span class="pun">(</span><span class="pln">history</span><span class="pun">,</span><span class="pln"> </span><span class="str">'loss'</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p><img src="./Text classification with an RNN  _  TensorFlow Core_files/output_IUzgkqnhmKD2_0.png" alt="png"></p>
+
+<devsite-heading text="Stack two or more LSTM layers" for="stack_two_or_more_lstm_layers" level="h2" link="" tabindex="0" toc="" back-to-top=""><h2 id="stack_two_or_more_lstm_layers" is-upgraded="">Stack two or more LSTM layers<a href="https://www.tensorflow.org/tutorials/text/text_classification_rnn#top_of_page" class="devsite-back-to-top-link material-icons" data-title="Back to top"></a></h2></devsite-heading>
+
+<p>Keras recurrent layers have two available modes that are controlled by the <code translate="no" dir="ltr">return_sequences</code> constructor argument:</p>
+
+<ul>
+<li>Return either the full sequences of successive outputs for each timestep (a 3D tensor of shape <code translate="no" dir="ltr">(batch_size, timesteps, output_features)</code>).</li>
+<li>Return only the last output for each input sequence (a 2D tensor of shape (batch_size, output_features)).</li>
+</ul>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">model </span><span class="pun">=</span><span class="pln"> tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="typ">Sequential</span><span class="pun">([</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Embedding</span><span class="pun">(</span><span class="pln">encoder</span><span class="pun">.</span><span class="pln">vocab_size</span><span class="pun">,</span><span class="pln"> </span><span class="lit">64</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Bidirectional</span><span class="pun">(</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="pln">LSTM</span><span class="pun">(</span><span class="lit">64</span><span class="pun">,</span><span class="pln"> &nbsp;return_sequences</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Bidirectional</span><span class="pun">(</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="pln">LSTM</span><span class="pun">(</span><span class="lit">32</span><span class="pun">)),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Dense</span><span class="pun">(</span><span class="lit">64</span><span class="pun">,</span><span class="pln"> activation</span><span class="pun">=</span><span class="str">'relu'</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Dropout</span><span class="pun">(</span><span class="lit">0.5</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">layers</span><span class="pun">.</span><span class="typ">Dense</span><span class="pun">(</span><span class="lit">1</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">])</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">model</span><span class="pun">.</span><span class="pln">compile</span><span class="pun">(</span><span class="pln">loss</span><span class="pun">=</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">losses</span><span class="pun">.</span><span class="typ">BinaryCrossentropy</span><span class="pun">(</span><span class="pln">from_logits</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; optimizer</span><span class="pun">=</span><span class="pln">tf</span><span class="pun">.</span><span class="pln">keras</span><span class="pun">.</span><span class="pln">optimizers</span><span class="pun">.</span><span class="typ">Adam</span><span class="pun">(</span><span class="lit">1e-4</span><span class="pun">),</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; metrics</span><span class="pun">=[</span><span class="str">'accuracy'</span><span class="pun">])</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code><devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">history </span><span class="pun">=</span><span class="pln"> model</span><span class="pun">.</span><span class="pln">fit</span><span class="pun">(</span><span class="pln">train_dataset</span><span class="pun">,</span><span class="pln"> epochs</span><span class="pun">=</span><span class="lit">10</span><span class="pun">,</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; validation_data</span><span class="pun">=</span><span class="pln">test_dataset</span><span class="pun">,</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; validation_steps</span><span class="pun">=</span><span class="lit">30</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">Epoch 1/10
+391/391 [==============================] - 73s 188ms/step - loss: 0.6533 - accuracy: 0.5583 - val_loss: 0.5066 - val_accuracy: 0.7781
+Epoch 2/10
+391/391 [==============================] - 74s 189ms/step - loss: 0.4130 - accuracy: 0.8283 - val_loss: 0.3866 - val_accuracy: 0.8344
+Epoch 3/10
+391/391 [==============================] - 74s 190ms/step - loss: 0.2935 - accuracy: 0.8892 - val_loss: 0.3406 - val_accuracy: 0.8604
+Epoch 4/10
+391/391 [==============================] - 75s 193ms/step - loss: 0.2360 - accuracy: 0.9168 - val_loss: 0.3579 - val_accuracy: 0.8625
+Epoch 5/10
+391/391 [==============================] - 75s 192ms/step - loss: 0.2028 - accuracy: 0.9318 - val_loss: 0.3645 - val_accuracy: 0.8568
+Epoch 6/10
+391/391 [==============================] - 76s 193ms/step - loss: 0.1811 - accuracy: 0.9412 - val_loss: 0.3920 - val_accuracy: 0.8604
+Epoch 7/10
+391/391 [==============================] - 75s 192ms/step - loss: 0.1547 - accuracy: 0.9529 - val_loss: 0.4203 - val_accuracy: 0.8583
+Epoch 8/10
+391/391 [==============================] - 75s 191ms/step - loss: 0.1333 - accuracy: 0.9617 - val_loss: 0.4406 - val_accuracy: 0.8536
+Epoch 9/10
+391/391 [==============================] - 75s 192ms/step - loss: 0.1136 - accuracy: 0.9699 - val_loss: 0.4735 - val_accuracy: 0.8422
+Epoch 10/10
+391/391 [==============================] - 75s 192ms/step - loss: 0.0988 - accuracy: 0.9755 - val_loss: 0.5162 - val_accuracy: 0.8536
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">test_loss</span><span class="pun">,</span><span class="pln"> test_acc </span><span class="pun">=</span><span class="pln"> model</span><span class="pun">.</span><span class="pln">evaluate</span><span class="pun">(</span><span class="pln">test_dataset</span><span class="pun">)</span><span class="pln"><br><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'Test Loss: {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">test_loss</span><span class="pun">))</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="str">'Test Accuracy: {}'</span><span class="pun">.</span><span class="pln">format</span><span class="pun">(</span><span class="pln">test_acc</span><span class="pun">))</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">391/391 [==============================] - 29s 74ms/step - loss: 0.4999 - accuracy: 0.8492
+Test Loss: 0.4999251365661621
+Test Accuracy: 0.8492000102996826
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="com"># predict on a sample text without padding.</span><span class="pln"><br><br>sample_pred_text </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'The movie was not good. The animation and the graphics '</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="str">'were terrible. I would not recommend this movie.'</span><span class="pun">)</span><span class="pln"><br>predictions </span><span class="pun">=</span><span class="pln"> sample_predict</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">,</span><span class="pln"> pad</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="pln">predictions</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">[[-2.537749]]
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="com"># predict on a sample text with padding</span><span class="pln"><br><br>sample_pred_text </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'The movie was not good. The animation and the graphics '</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="str">'were terrible. I would not recommend this movie.'</span><span class="pun">)</span><span class="pln"><br>predictions </span><span class="pun">=</span><span class="pln"> sample_predict</span><span class="pun">(</span><span class="pln">sample_pred_text</span><span class="pun">,</span><span class="pln"> pad</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">print</span><span class="pun">(</span><span class="pln">predictions</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<devsite-code no-copy=""><pre class="tfo-notebook-code-cell-output" translate="no" dir="ltr" is-upgraded="">[[-2.4626944]]
+</pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button></div></devsite-code>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">plot_graphs</span><span class="pun">(</span><span class="pln">history</span><span class="pun">,</span><span class="pln"> </span><span class="str">'accuracy'</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p><img src="./Text classification with an RNN  _  TensorFlow Core_files/output__YYub0EDtwCu_0.png" alt="png"></p>
+<devsite-code><pre class="lang-python" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">plot_graphs</span><span class="pun">(</span><span class="pln">history</span><span class="pun">,</span><span class="pln"> </span><span class="str">'loss'</span><span class="pun">)</span><span class="pln"><br></span></code></pre><div class="devsite-code-buttons-container"><button class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" data-title="Dark code theme"></button><button class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" data-title="Light code theme"></button><button class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" data-title="Copy"></button></div></devsite-code>
+<p><img src="./Text classification with an RNN  _  TensorFlow Core_files/output_DPV3Nn9xtwFM_0.png" alt="png"></p>
+
+<p>Check out other existing recurrent layers such as <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/GRU">GRU layers</a>.</p>
+
+<p>If you're interestied in building custom RNNs, see the <a href="https://www.tensorflow.org/guide/keras/rnn">Keras RNN Guide</a>.</p>
+          </div>
+
+    
+                   <devsite-page-rating position="footer" selected-rating="0" hover-rating-star="0">
+         <div><div class="devsite-rating-caption">Was this page helpful?</div><div class="devsite-rating-stars"><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="1" track-metadata-score="1" track-type="feedback" track-name="rating" track-metadata-position="footer" role="button" data-title="Unusable documentation" aria-label="Site content star ratings, rating 1 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="2" track-metadata-score="2" track-type="feedback" track-name="rating" track-metadata-position="footer" role="button" data-title="Poor documentation" aria-label="Site content star ratings, rating 2 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="3" track-metadata-score="3" track-type="feedback" track-name="rating" track-metadata-position="footer" role="button" data-title="OK documentation" aria-label="Site content star ratings, rating 3 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="4" track-metadata-score="4" track-type="feedback" track-name="rating" track-metadata-position="footer" role="button" data-title="Good documentation" aria-label="Site content star ratings, rating 4 out of 5"></div><div class="devsite-rating-star devsite-rating-star-outline gc-analytics-event material-icons" data-rating-val="5" track-metadata-score="5" track-type="feedback" track-name="rating" track-metadata-position="footer" role="button" data-title="Excellent documentation" aria-label="Site content star ratings, rating 5 out of 5"></div></div><div class="devsite-rating-internal"><span class="devsite-rating-stats"></span></div></div></devsite-page-rating>
+                   
+          </article>
+</article>
+
+<devsite-content-footer class="nocontent">
+  <p>Except as otherwise noted, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. For details, see the <a href="https://developers.google.com/site-policies">Google Developers Site Policies</a>. Java is a registered trademark of Oracle and/or its affiliates.</p>  <p>Last updated 2020-03-31.</p></devsite-content-footer>
+
+
+
+                      </devsite-content>
+        </main>
+        <devsite-footer-promos class="devsite-footer">
+                      
+                  </devsite-footer-promos>
+        <devsite-footer-linkboxes class="devsite-footer">
+                      <nav class="devsite-footer-linkboxes nocontent">
+    <ul class="devsite-footer-linkboxes-list">
+        <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading">Stay connected</h3>      <ul class="devsite-footer-linkbox-list">
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://blog.tensorflow.org/" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 1)">
+            Blog
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://github.com/tensorflow/" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 2)">
+            GitHub
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://twitter.com/tensorflow" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 3)">
+            Twitter
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://youtube.com/tensorflow" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 4)">
+            YouTube
+          </a>
+        </li>
+              </ul>
+    </li>
+        <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading">Support</h3>      <ul class="devsite-footer-linkbox-list">
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://github.com/tensorflow/tensorflow/issues" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 1)">
+            Issue tracker
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://github.com/tensorflow/tensorflow/blob/master/RELEASE.md" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 2)">
+            Release notes
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://stackoverflow.com/questions/tagged/tensorflow" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 3)">
+            Stack Overflow
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://www.tensorflow.org/extras/tensorflow_brand_guidelines.pdf" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 4)">
+            Brand guidelines
+          </a>
+        </li>
+                <li class="devsite-footer-linkbox-item">
+          <a href="https://www.tensorflow.org/about/bib" class="devsite-footer-linkbox-link
+                    gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 5)">
+            Cite TensorFlow
+          </a>
+        </li>
+              </ul>
+    </li>
+      </ul>
+  </nav>
+                  </devsite-footer-linkboxes>
+        <devsite-footer-utility class="devsite-footer">
+                      
+<div class="devsite-footer-utility nocontent">
+  
+  <nav class="devsite-footer-utility-links">
+        <ul class="devsite-footer-utility-list">
+            <li class="devsite-footer-utility-item
+                 ">
+                        <a class="devsite-footer-utility-link gc-analytics-event" href="https://policies.google.com/terms" data-category="Site-Wide Custom Events" data-label="Footer Terms link">
+          Terms
+        </a>
+              </li>
+            <li class="devsite-footer-utility-item
+                 ">
+                        <a class="devsite-footer-utility-link gc-analytics-event" href="https://policies.google.com/privacy" data-category="Site-Wide Custom Events" data-label="Footer Privacy link">
+          Privacy
+        </a>
+              </li>
+            <li class="devsite-footer-utility-item
+                 devsite-footer-utility-button">
+                <span class="devsite-footer-utility-description">Sign up for the TensorFlow monthly newsletter</span>
+                        <a class="devsite-footer-utility-link gc-analytics-event" href="https://services.google.com/fb/forms/tensorflow/" data-category="Site-Wide Custom Events" data-label="Footer Subscribe link">
+          Subscribe
+        </a>
+              </li>
+          </ul>
+    
+    <devsite-language-selector>
+  <devsite-select class="devsite-language-selector-menu">
+    <select class="devsite-language-selector-select" name="language" track-name="click" track-type="languageSelector">
+              <option value="en" track-metadata-original-language="en" track-metadata-selected-language="en" track-name="changed" track-type="languageSelector" selected="selected">
+        English
+      </option>
+          <option value="zh_cn" track-metadata-original-language="en" track-metadata-selected-language="zh_cn" track-name="changed" track-type="languageSelector">
+        中文 – 简体
+      </option>
+          <option value="ja" track-metadata-original-language="en" track-metadata-selected-language="ja" track-name="changed" track-type="languageSelector">
+        日本語
+      </option>
+        </select>
+  <div class="devsite-select"><button type="button" class="devsite-select-toggle">English</button><ul class="devsite-select-list" scrollbars=""><li class="devsite-select-item" data-index="0" data-selected="">English</li><li class="devsite-select-item" data-index="1">中文 – 简体</li><li class="devsite-select-item" data-index="2">日本語</li></ul></div></devsite-select>
+</devsite-language-selector>
+
+  </nav>
+</div>
+                  </devsite-footer-utility>
+      </section></section>
+    <devsite-sitemask></devsite-sitemask>
+    <devsite-snackbar></devsite-snackbar>    <devsite-tooltip></devsite-tooltip>
+    <devsite-heading-link></devsite-heading-link>
+    <devsite-analytics>
+              <script type="application/json" analytics="">[{"metrics": {"ratings_value": "metric1", "ratings_count": "metric2"}, "dimensions": {"dimension6": "en", "dimension4": "TensorFlow Core", "dimension5": "en", "dimension3": false, "dimension1": "Signed out", "dimension8": null}, "gaid": "UA-69864048-1"}]</script>
+<script type="application/json" gtm="">{}</script>
+          </devsite-analytics>
+        <script>
+    (function(d,e,v,s,i,t,E){d['GoogleDevelopersObject']=i;
+    t=e.createElement(v);t.async=1;t.src=s;E=e.getElementsByTagName(v)[0];
+    E.parentNode.insertBefore(t,E);})(window, document, 'script',
+    'https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/js/app_loader.js', '[15,"en",null,"/js/devsite_app.js","https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26","https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow","https://tensorflow-dot-devsite-v2-prod-3p.appspot.com",null,null,["/_pwa/tensorflow/manifest.json","/_static/images/video-placeholder.svg","https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow/images/favicon.png","https://www.gstatic.com/devrel-devsite/prod/v84899ba5ac366dd19b845bb4579ea9262ac5ac73d5db61a8fa440a5f2fc65a26/tensorflow/images/lockup.svg","https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Material+Icons"],1]')
+  </script>  
+</body></html>
