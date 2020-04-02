@@ -5,4 +5,4 @@
 
 # Tensorflow and Keras
 
-Here we can get some examples of LSTM Neural Network Examples
+Here we can get some examples of LSTM Neural Network
