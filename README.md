@@ -1,4 +1,6 @@
-![Logo](https://www.google.com/url?sa=i&url=https%3A%2F%2Ftensorflow.rstudio.com%2F&psig=AOvVaw0eNnaV0bIOuK0BcyM1yDgq&ust=1585919893977000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCODe96vqyegCFQAAAAAdAAAAABAD)
+<p align="center">
+  <img src="https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/img/tf-od-api-logo.png" width=140 height=195>
+</p>
 
 # Tensorflow and Keras
 
