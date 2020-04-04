@@ -58,6 +58,7 @@ target_token_index = dict(
 
 
 print(input_token_index)
+print(target_token_index)
 
 encoder_input_data = np.zeros(
   (len(input_texts), max_encoder_seq_length, num_encoder_tokens),

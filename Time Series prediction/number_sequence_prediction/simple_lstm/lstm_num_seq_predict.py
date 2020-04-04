@@ -25,9 +25,15 @@ raw_seq = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 n_steps = 3
 # split into samples
 X, y = split_sequence(raw_seq, n_steps)
+print('Before Reshape, \nX:\n',X,'y: ', y)
+print(X.shape)
+print(y.shape)
 # reshape from [samples, timesteps] into [samples, timesteps, features]
 n_features = 1
 X = X.reshape((X.shape[0], X.shape[1], n_features))
+print('After Reshape, \nX:\n',X,'y: ', y)
+print(X.shape)
+print(y.shape)
 # define model
 model = Sequential()
 model.add(LSTM(50, activation='relu', input_shape=(n_steps, n_features)))
