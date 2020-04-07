@@ -16,11 +16,11 @@ X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
 X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
 # create the model
 
-print(X_train[0])
-
 model = load_model("lstm_imdb_review_model.h5")
 
 index = 1
+
+print(X_test[index])
 
 prediction = model.predict(np.expand_dims(X_test[index],axis=0))
 
