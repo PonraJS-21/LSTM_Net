@@ -17,7 +17,6 @@ input_characters = set()
 target_characters = set()
 
 num_samples = 10000
-num_samples
 
 for line in lines[: min(num_samples, len(lines) - 1)]:
   input_text, target_text = line.split('\t')
@@ -47,9 +46,9 @@ print('Number of unique output tokens:', num_decoder_tokens)
 print('Max sequence length for inputs:', max_encoder_seq_length)
 print('Max sequence length for outputs:', max_decoder_seq_length)
 
-# print(input_characters)
+print(input_characters)
 
-# print(target_characters)
+print(target_characters)
 
 input_token_index = dict(
   [(char, i) for i, char in enumerate(input_characters)])
