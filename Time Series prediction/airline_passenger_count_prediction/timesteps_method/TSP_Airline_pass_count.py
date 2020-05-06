@@ -22,7 +22,7 @@ numpy.random.seed(7)
 dataframe = read_csv('../data/airline-passengers.csv', usecols=[1], engine='python')
 dataset = dataframe.values
 dataset = dataset.astype('float32')
-# normalize the dataset
+# normalize the dataset between 0 to 1
 scaler = MinMaxScaler(feature_range=(0, 1))
 dataset = scaler.fit_transform(dataset)
 # split into train and test sets
